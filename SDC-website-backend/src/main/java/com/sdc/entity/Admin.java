@@ -21,7 +21,7 @@ public class Admin {
     @Column
     private String name;
     
-    @Column
+    @Column(name="email" , nullable = false, unique = true)
     private String email;
     
     @Column
