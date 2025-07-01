@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 
 public class Contact {
-	// this is a test
+
 	    @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Integer contactId;
@@ -30,6 +30,13 @@ public class Contact {
 		 
 		 @Column
 		private String message;
-		
+
+	public Contact(String name, String email, String contactNo, String query, String message) {
+		this.name = name;
+		this.email = email;
+		this.contactNo = contactNo;
+		this.query = query;
+		this.message = message;
 	}
+}
 
