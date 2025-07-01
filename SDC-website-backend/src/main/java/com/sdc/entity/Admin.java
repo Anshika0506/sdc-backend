@@ -30,4 +30,14 @@ public class Admin {
     @Column
     private String password;
 
+	public Admin(String name, String email, String contactNo, String password) {
+		super();
+		this.name = name;
+		this.email = email;
+		this.contactNo = contactNo;
+		this.password = password;
+	}
+    
+    
+
 }
