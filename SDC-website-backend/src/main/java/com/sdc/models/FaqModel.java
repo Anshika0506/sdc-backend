@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminModel {
+public class FaqModel {
 	
-	private String name;
-	private String email;
-	private String contact_no;
-	private String password;
+	private String ques;
+	
+	private String ans;
+
 }
