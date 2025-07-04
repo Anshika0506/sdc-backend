@@ -1,5 +1,4 @@
 package com.sdc.entity;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +18,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "projects")
@@ -45,11 +47,15 @@ public class Projects {
 	@Column
 	private String link;
 
+	
 	@ManyToMany
 	@JoinTable(
 			name = "project_team_member",
 			joinColumns = @JoinColumn(name = "projectID"),
 			inverseJoinColumns = @JoinColumn(name = "memberId")
 	)
+
+	@JsonIgnore
+	@JsonIgnoreProperties("projects") 
 	private List<TeamMember> teamMembers = new ArrayList<>();
 }

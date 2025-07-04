@@ -1,6 +1,7 @@
 package com.sdc.controller;
 
 import com.sdc.entity.Projects;
+import com.sdc.models.ProjectModel;
 import com.sdc.services.ProjectService;
 import com.sdc.utils.ApiResponse;
 
@@ -16,33 +17,29 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
+<<<<<<< HEAD:SDC-website-backend/src/main/java/com/sdc/controller/projectControler.java
 @RequestMapping("/admin/projects")
 @PreAuthorize("hasRole('ADMIN')") 
 public class projectControler {
+=======
+@RequestMapping("/projects")
+public class projectController {
+>>>>>>> origin/ayushi:SDC-website-backend/src/main/java/com/sdc/controller/projectController.java
 
     @Autowired
     private ProjectService projectService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadProject(
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("link") String link,
-            @RequestParam("image") MultipartFile imageFile) {
+    @PostMapping(value = "/upload",  consumes = "multipart/form-data")
+    public ResponseEntity<ApiResponse> uploadProject(@ModelAttribute ProjectModel model) {
 
         try {
-            Projects project = new Projects();
-            project.setTitle(title);
-            project.setDescription(description);
-            project.setLink(link);
-            project.setImage(imageFile.getBytes());  // Set image as byte[]
-
-            Projects saved = projectService.saveProject(project);
-            return ResponseEntity.ok("Project saved with ID: " + saved.getProjectID());
-
-        } catch (Exception e) {
+            Projects saved = projectService.saveProject(model);
+            return ResponseEntity.ok(new ApiResponse(true,"project saved",saved));
+        } 
+        catch (Exception e) {
+        	System.err.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to upload project: " + e.getMessage());
+                    .body(new ApiResponse(false,"project not saved",null));
         }
     }
 
