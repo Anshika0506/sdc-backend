@@ -3,18 +3,21 @@ package com.sdc.controller;
 import com.sdc.entity.Projects;
 import com.sdc.services.ProjectService;
 import com.sdc.utils.ApiResponse;
+
 import jakarta.servlet.ServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/admin/projects")
+@PreAuthorize("hasRole('ADMIN')") 
 public class projectControler {
 
     @Autowired
