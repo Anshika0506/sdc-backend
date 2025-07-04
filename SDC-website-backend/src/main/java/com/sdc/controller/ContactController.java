@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/contactdetails")
+@RequestMapping("/auth/contactdetails")
 public class ContactController {
     @Autowired
     private ContactRepository contactRepository;
@@ -18,6 +18,7 @@ public class ContactController {
         return contactRepository.findAll();
     }
 
+    
     @PostMapping
     public Contact createEmployee(@RequestBody Contact contact){
         return contactRepository.save(contact);
