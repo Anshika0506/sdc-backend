@@ -17,14 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-<<<<<<< HEAD:SDC-website-backend/src/main/java/com/sdc/controller/projectControler.java
+
 @RequestMapping("/admin/projects")
 @PreAuthorize("hasRole('ADMIN')") 
-public class projectControler {
-=======
-@RequestMapping("/projects")
-public class projectController {
->>>>>>> origin/ayushi:SDC-website-backend/src/main/java/com/sdc/controller/projectController.java
+public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
