@@ -3,6 +3,8 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sdc.entity.TeamMember;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
@@ -26,6 +28,6 @@ public class ProjectModel {
 	private MultipartFile image;
     
     private List<Integer> teamMemberIds;
-    private List<ProjectModel> projects;
+  //  private List<TeamMember> projects;
     
 }

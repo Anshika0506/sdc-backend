@@ -34,6 +34,7 @@ public class projectController {
 
         try {
             Projects saved = projectService.saveProject(model);
+            
             return ResponseEntity.ok(new ApiResponse(true,"project saved",saved));
         } 
         catch (Exception e) {
