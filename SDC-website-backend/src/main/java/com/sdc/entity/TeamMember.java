@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,9 +21,11 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name="teamMember")
+@ToString(exclude = "projects")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -57,8 +61,8 @@ public class TeamMember {
 	
 	
 	@ManyToMany(mappedBy = "teamMembers")
-	@JsonBackReference
-	@JsonIgnore
+	@JsonInclude(JsonInclude.Include.ALWAYS)
+	@JsonIgnoreProperties("teamMembers") 
 	private List<Projects> projects = new ArrayList<>() ;
 	
 }

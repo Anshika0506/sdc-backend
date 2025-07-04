@@ -26,6 +26,6 @@ public class TeamMemberModel {
     private MultipartFile image;  //  Added for image upload
     
     private List<Integer> projectIds;
-    private List<ProjectModel> projects;
+  //  private List<ProjectModel> projects;
     
 }

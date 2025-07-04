@@ -1,7 +1,9 @@
 package com.sdc.services;
 
+import com.sdc.entity.Projects;
 import com.sdc.entity.TeamMember;
 import com.sdc.models.TeamMemberModel;
+import com.sdc.repo.ProjectRepo;
 import com.sdc.repo.TeamMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,10 @@ public class TeamMemberService {
 
     @Autowired
     private TeamMemberRepository teamMemberRepository;
+    
+    @Autowired
+    private ProjectRepo projectRepo;
+    
 
     // Add Team Member (with image)
     public TeamMember addTeamMemberWithImage(TeamMemberModel model) {
@@ -27,6 +33,26 @@ public class TeamMemberService {
         } catch (IOException e) {
             throw new RuntimeException("Error reading image file", e);
         }
+        
+        List<Integer> ids = model.getProjectIds();
+        if(ids != null && !ids.isEmpty())
+        {
+        	List<Projects> projects = projectRepo.findAllById(ids);
+
+        	 if(projects.size() != ids.size() )
+        	    {
+        	    System.err.println(123445);
+        	    }
+        	 member.setProjects(projects);
+        	 for (Projects project : projects) {
+        	        project.getTeamMembers().add(member);  //creates join table record
+        	    }
+        	}
+
+     
+        System.out.println("TeamMember Created: " + member.getName());
+
+        
         return teamMemberRepository.save(member);
     }
 
