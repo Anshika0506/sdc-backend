@@ -68,8 +68,8 @@ public class AuthController {
 
 	        String token = jwtService.generateToken(userDetails);
 
-System.err.println("next step");
-	        // 🔽 Add this line to print token
+            System.err.println("next step");
+	        //  Add this line to print token
 	        System.out.println("Generated token: " + token);
 	        
 	        Map<String, Object> responseData = new HashMap<>();
@@ -85,7 +85,16 @@ System.err.println("next step");
 	        return ResponseEntity.ok(new ApiResponse(true, "Login successful", responseData));
 	    }
 
-	    
+	    @PostMapping("/saveAdmin")
+	    public ResponseEntity<ApiResponse> saveAdmin(@RequestBody AdminModel model) {
+	        Boolean status = adminService.saveAdmin(model);
+
+	        if (status) {
+	            return ResponseEntity.ok(new ApiResponse(true, "Admin saved successfully", model));
+	        }
+	        return ResponseEntity.ok(new ApiResponse(false, "Admin not saved", model));
+	    }
+
 	  
 	}
 

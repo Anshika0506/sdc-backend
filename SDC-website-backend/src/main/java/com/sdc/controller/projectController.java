@@ -50,6 +50,22 @@ public class projectController {
                 .contentType(MediaType.IMAGE_JPEG) // or IMAGE_PNG, etc.
                 .body(project.getImage());
     }
+    @PutMapping(value = "/update/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<ApiResponse> updateProjectWithImage(
+            @PathVariable Integer id,
+            @ModelAttribute ProjectModel model) {
+
+        try {
+            return projectService.updateProjectWithImage(id, model)
+                    .map(updated -> ResponseEntity.ok(new ApiResponse(true, "Project updated successfully", updated)))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(new ApiResponse(false, "Project not found", null)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "Error updating project", null));
+        }
+    }
 
     @DeleteMapping("/deleteproject/{id}")
     public ResponseEntity<String> deleteProject(@PathVariable Integer id) {
@@ -62,7 +78,22 @@ public class projectController {
 //        return ResponseEntity.ok(res);
 //    }
     @GetMapping("/allproject")
-    public ResponseEntity<ApiResponse> getAllProject(ServletResponse servletResponse) {
-        return ResponseEntity.ok(new ApiResponse( true,"project fetched",projectService.getAllProjects()));
+    public ResponseEntity<ApiResponse> getAllProjects() {
+        List<Projects> projects = projectService.getAllProjects();
+
+        // Debug log to confirm data is loaded
+        for (Projects project : projects) {
+            System.out.println("Project: " + project.getTitle());
+            if (project.getTeamMembers() != null) {
+                System.out.println("Members count: " + project.getTeamMembers().size());
+                project.getTeamMembers().forEach(member ->
+                    System.out.println(" - " + member.getName()));
+            } else {
+                System.out.println("No members");
+            }
+        }
+
+        return ResponseEntity.ok(new ApiResponse(true, "Projects fetched successfully", projects));
     }
+
 }
