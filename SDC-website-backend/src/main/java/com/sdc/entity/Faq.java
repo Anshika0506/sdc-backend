@@ -1,12 +1,14 @@
 package com.sdc.entity;
 
 import jakarta.persistence.Column;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
+import lombok.Data;
+@Data
 @Entity
 @Table(name="faq")
 
@@ -22,8 +24,7 @@ public class Faq {
 	@Column
 	private String ans;
 
-	public Faq(String ques, String ans) {
-		super();
+	public Faq() {
 		this.ques = ques;
 		this.ans = ans;
 	}
