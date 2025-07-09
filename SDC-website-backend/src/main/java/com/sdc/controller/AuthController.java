@@ -29,7 +29,7 @@ import com.sdc.utils.ApiResponse;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 	
 	   @Autowired
@@ -48,6 +48,8 @@ public class AuthController {
 	    private CustomUserDetailsService customUserDetailsService;
 
 	    @PostMapping("/login")
+	    
+	    
 	    public ResponseEntity<ApiResponse> login(@RequestBody LoginModel request) {
 	        UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getEmail());
 
@@ -68,8 +70,8 @@ public class AuthController {
 
 	        String token = jwtService.generateToken(userDetails);
 
-            System.err.println("next step");
-	        //  Add this line to print token
+System.err.println("next step");
+	        // 🔽 Add this line to print token
 	        System.out.println("Generated token: " + token);
 	        
 	        Map<String, Object> responseData = new HashMap<>();
@@ -84,17 +86,9 @@ public class AuthController {
 
 	        return ResponseEntity.ok(new ApiResponse(true, "Login successful", responseData));
 	    }
+	    
 
-	    @PostMapping("/saveAdmin")
-	    public ResponseEntity<ApiResponse> saveAdmin(@RequestBody AdminModel model) {
-	        Boolean status = adminService.saveAdmin(model);
-
-	        if (status) {
-	            return ResponseEntity.ok(new ApiResponse(true, "Admin saved successfully", model));
-	        }
-	        return ResponseEntity.ok(new ApiResponse(false, "Admin not saved", model));
-	    }
-
+	    
 	  
 	}
 

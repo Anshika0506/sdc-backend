@@ -8,6 +8,7 @@ import com.sdc.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,12 +16,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/faq")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
+@PreAuthorize("hasRole('ADMIN')") 
 public class FaqController {
 
     @Autowired
     private FaqService faqService;
 
+    //to add faqs
     @PostMapping("/addfaq")
     public ResponseEntity<ApiResponse> createFaq(@RequestBody FaqModel faqModel) {
         try {
@@ -31,6 +34,7 @@ public class FaqController {
             }
 
             Faq saved = faqService.addFaq(faqModel);
+            System.err.println(saved);
             return ResponseEntity.ok(new ApiResponse(true, "FAQ created successfully", saved));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(

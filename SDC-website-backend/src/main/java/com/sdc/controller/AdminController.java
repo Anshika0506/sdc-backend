@@ -1,8 +1,11 @@
 package com.sdc.controller;
 
+import com.sdc.entity.Contact;
+import com.sdc.entity.Projects;
 import com.sdc.entity.TeamMember;
 import com.sdc.models.AdminModel;
 import com.sdc.models.TeamMemberModel;
+import com.sdc.repo.ContactRepository;
 import com.sdc.services.AdminService;
 import com.sdc.services.ProjectService;
 import com.sdc.services.TeamMemberService;
@@ -15,11 +18,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Base64;
 
 @RestController
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')") // applies to all methods
+@CrossOrigin(origins = "http://localhost:5173")
 public class AdminController {
 
     @Autowired
@@ -30,6 +33,9 @@ public class AdminController {
 
     @Autowired
     private ProjectService projectService;
+    
+    @Autowired
+    private ContactRepository contactRepository;
 
     @PostMapping("/saveAdmin")
     public ResponseEntity<ApiResponse> saveAdmin(@RequestBody AdminModel model) {
@@ -53,15 +59,22 @@ public class AdminController {
                 .orElseGet(() -> ResponseEntity.ok(new ApiResponse(false, "Team Member not found", null)));
     }
 
-    // ✅ Get All Team Members (return list with Base64 images)
     @GetMapping("/teamMember/getAll")
-    public ResponseEntity<List<Map<String, Object>>> getAllMembers() {
+    public ResponseEntity<ApiResponse> getAllMembers() {
         List<TeamMember> members = teamMemberService.getAll();
         List<Map<String, Object>> responseList = members.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(responseList);
+
+        return ResponseEntity.ok(new ApiResponse(
+                true,
+                "Team members fetched successfully",
+                responseList
+            ));
     }
+
+    
+    
 
     // ❌ Delete Team Member (no image needed here)
     @DeleteMapping("/teamMember/delete/{id}")
@@ -78,10 +91,10 @@ public class AdminController {
         boolean success = projectService.assignTeamMembers(projectId, memberIds);
         return ResponseEntity.ok(new ApiResponse(success, success ? "Team members assigned successfully" : "Project or members not found", memberIds));
     }
-
-    // ✅ Convert TeamMember to JSON-friendly format with image as base64
+  
+ // ✅ Convert TeamMember to JSON-friendly format with image and project titles
     private Map<String, Object> convertToResponse(TeamMember member) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("memberId", member.getMemberId());
         map.put("name", member.getName());
         map.put("branch", member.getBranch());
@@ -90,6 +103,24 @@ public class AdminController {
         map.put("github_url", member.getGithub_url());
         map.put("insta_url", member.getInsta_url());
         map.put("imageBase64", member.getImage() != null ? Base64.getEncoder().encodeToString(member.getImage()) : null);
+
+        // ✅ Add only the titles of associated projects
+        List<String> projectTitles = member.getProjects() != null
+                ? member.getProjects().stream()
+                    .map(Projects::getTitle)
+                    .collect(Collectors.toList())
+                : new ArrayList<>();
+
+        map.put("projectTitles", projectTitles);
         return map;
     }
+
+    
+    
+    //contact apis
+    @GetMapping("/getAllContacts")
+    public List<Contact> getAllContacts(){
+        return contactRepository.findAll();
+    }
+    
 }

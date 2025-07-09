@@ -8,18 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/auth/contactdetails")
+@RequestMapping("/auth/contact")
 public class ContactController {
     @Autowired
     private ContactRepository contactRepository;
 
-    @GetMapping
-    public List<Contact> getAllContacts(){
-        return contactRepository.findAll();
-    }
+   
 
     
-    @PostMapping
+    @PostMapping("/save")
     public Contact createEmployee(@RequestBody Contact contact){
         return contactRepository.save(contact);
     }
