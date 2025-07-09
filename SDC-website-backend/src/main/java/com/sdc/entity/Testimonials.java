@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,13 +27,14 @@ public class Testimonials {
 
 	@Column
 	private String des;
+	
+	@Lob
+	@Column(name = "image", columnDefinition = "LONGBLOB")
+	private byte[] image;
 
 	public Testimonials(String clientName, String des) {
-		super();
+	
 		this.clientName = clientName;
 		this.des = des;
-	}
-	
-	
-	
+	}	
 }
