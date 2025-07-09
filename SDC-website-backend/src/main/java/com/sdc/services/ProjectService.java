@@ -3,7 +3,7 @@ package com.sdc.services;
 import com.sdc.entity.Projects;
 import com.sdc.entity.TeamMember;
 import com.sdc.models.ProjectModel;
-import com.sdc.repo.ProjectRepo;
+import com.sdc.repo.ProjectRepository;
 import com.sdc.repo.TeamMemberRepository;
 
 import ch.qos.logback.core.model.Model;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class ProjectService {
 
     @Autowired
-    private ProjectRepo projectRepo;
+    private ProjectRepository projectRepo;
 
     @Autowired
     private TeamMemberRepository teamMemberRepository;

@@ -12,21 +12,21 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-//@RequestMapping("/api/testimonials")
+@RequestMapping("/api/testimonials")
 public class TestimonialsController {
 
     @Autowired
     private TestimonialsRepository testimonialsRepository;
 
     // 🔹 GET all testimonials
-    @GetMapping("/api/testimonials/getall")
+    @GetMapping("/getall")
     public ResponseEntity<ApiResponse> getAllTestimonials(ServletResponse response) {
         List<Testimonials> list = testimonialsRepository.findAll();
         return ResponseEntity.ok(new ApiResponse(true, "Fetched all testimonials", list));
     }
 
     // 🔹 GET testimonial by ID
-    @GetMapping("/api/testimonials/getbyid/{id}")
+    @GetMapping("/getbyid/{id}")
     public ResponseEntity<ApiResponse> getTestimonialById(@PathVariable Long id) {
         Optional<Testimonials> optional = testimonialsRepository.findById(id);
         if (optional.isPresent()) {
@@ -37,14 +37,14 @@ public class TestimonialsController {
     }
 
     // 🔹 CREATE a testimonial
-    @PostMapping("/api/testimonials/addtestimonial")
+    @PostMapping("/addtestimonial")
     public ResponseEntity<ApiResponse> createTestimonial(@RequestBody Testimonials testimonial) {
         Testimonials saved = testimonialsRepository.save(testimonial);
         return ResponseEntity.ok(new ApiResponse(true, "Testimonial created successfully", saved));
     }
 
     // 🔹 UPDATE a testimonial
-    @PutMapping("/api/testimonials/updatetestimonial/{id}")
+    @PutMapping("/updatetestimonial/{id}")
     public ResponseEntity<ApiResponse> updateTestimonial(@PathVariable Long id, @RequestBody Testimonials updatedData) {
         Optional<Testimonials> optional = testimonialsRepository.findById(id);
         if (optional.isPresent()) {
@@ -60,7 +60,7 @@ public class TestimonialsController {
     }
 
     // 🔹 DELETE a testimonial
-    @DeleteMapping("/api/testimonials/deletetestimonial/{id}")
+    @DeleteMapping("/deletetestimonial/{id}")
     public ResponseEntity<ApiResponse> deleteTestimonial(@PathVariable Long id) {
         if (testimonialsRepository.existsById(id)) {
             testimonialsRepository.deleteById(id);
