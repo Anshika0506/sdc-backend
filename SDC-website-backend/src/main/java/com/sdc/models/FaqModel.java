@@ -9,13 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FaqModel {
-	
+
 	private String ques;
-	
+
 	private String ans;
+}
+
 
 //	public FaqModel(String ques, String ans) {
 //		this.ques = ques;
 //		this.ans = ans;
 //	}
-}
+
