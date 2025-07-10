@@ -59,19 +59,19 @@ public class AdminController {
                 .orElseGet(() -> ResponseEntity.ok(new ApiResponse(false, "Team Member not found", null)));
     }
 
-    @GetMapping("/teamMember/getAll")
-    public ResponseEntity<ApiResponse> getAllMembers() {
-        List<TeamMember> members = teamMemberService.getAll();
-        List<Map<String, Object>> responseList = members.stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new ApiResponse(
-                true,
-                "Team members fetched successfully",
-                responseList
-            ));
-    }
+//    @GetMapping("/teamMember/getAll")
+//    public ResponseEntity<ApiResponse> getAllMembers() {
+//        List<TeamMember> members = teamMemberService.getAll();
+//        List<Map<String, Object>> responseList = members.stream()
+//                .map(this::convertToResponse)
+//                .collect(Collectors.toList());
+//
+//        return ResponseEntity.ok(new ApiResponse(
+//                true,
+//                "Team members fetched successfully",
+//                responseList
+//            ));
+//    }
 
     
     

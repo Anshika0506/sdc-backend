@@ -18,9 +18,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/auth/projects")
 @CrossOrigin(origins = "http://localhost:5173")
-@PreAuthorize("hasRole('ADMIN')") 
+
 public class ProjectController {	
 
     @Autowired
@@ -60,16 +60,16 @@ public class ProjectController {
         return ResponseEntity.ok("Project deleted successfully");
     }
 
-    @GetMapping("/allproject")
-    public ResponseEntity<ApiResponse> getAllProjects() {
-        List<Projects> projects = projectService.getAllProjects();
-
-        List<Object> modified = projects.stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new ApiResponse(true, "Projects fetched successfully", modified));
-    }
+//    @GetMapping("/allproject")
+//    public ResponseEntity<ApiResponse> getAllProjects() {
+//        List<Projects> projects = projectService.getAllProjects();
+//
+//        List<Object> modified = projects.stream()
+//                .map(this::convertToResponse)
+//                .collect(Collectors.toList());
+//
+//        return ResponseEntity.ok(new ApiResponse(true, "Projects fetched successfully", modified));
+//    }
 
     
     

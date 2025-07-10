@@ -53,29 +53,29 @@ public class AluminiController {
 		return ResponseEntity.ok(new ApiResponse(false, "alumini not saved" , null));
 	}
 	
-	  @GetMapping("/getAll-Alumini")
-	    public ResponseEntity<ApiResponse> getAllAlumini() {
-	        List<Alumini> alumniList = aluminiRepo.findAll();
-
-	        List<Map<String, Object>> responseList = alumniList.stream().map(alumini -> {
-	            Map<String, Object> map = new LinkedHashMap<>();
-	            map.put("aluminiId", alumini.getAluminiId());
-	            map.put("aluminiName", alumini.getAluminiName());
-	            map.put("lpa", alumini.getLpa());
-	            map.put("companyName", alumini.getCompanyName());
-	            map.put("content", alumini.getContent());
-
-	            String imageBase64 = (alumini.getImage() != null && alumini.getImage().length > 0)
-	                    ? Base64.getEncoder().encodeToString(alumini.getImage())
-	                    : null;
-
-	            map.put("imageBase64", imageBase64);
-	            return map;
-	        }).collect(Collectors.toList());
-
-	        ApiResponse response = new ApiResponse(true, "Alumini fetched successfully", responseList);
-	        return ResponseEntity.ok(response);
-	    }
+//	  @GetMapping("/getAll-Alumini")
+//	    public ResponseEntity<ApiResponse> getAllAlumini() {
+//	        List<Alumini> alumniList = aluminiRepo.findAll();
+//
+//	        List<Map<String, Object>> responseList = alumniList.stream().map(alumini -> {
+//	            Map<String, Object> map = new LinkedHashMap<>();
+//	            map.put("aluminiId", alumini.getAluminiId());
+//	            map.put("aluminiName", alumini.getAluminiName());
+//	            map.put("lpa", alumini.getLpa());
+//	            map.put("companyName", alumini.getCompanyName());
+//	            map.put("content", alumini.getContent());
+//
+//	            String imageBase64 = (alumini.getImage() != null && alumini.getImage().length > 0)
+//	                    ? Base64.getEncoder().encodeToString(alumini.getImage())
+//	                    : null;
+//
+//	            map.put("imageBase64", imageBase64);
+//	            return map;
+//	        }).collect(Collectors.toList());
+//
+//	        ApiResponse response = new ApiResponse(true, "Alumini fetched successfully", responseList);
+//	        return ResponseEntity.ok(response);
+//	    }
 	  
 	  @PutMapping(value = "/update-Alumini/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	  public ResponseEntity<ApiResponse> updateAlumini(

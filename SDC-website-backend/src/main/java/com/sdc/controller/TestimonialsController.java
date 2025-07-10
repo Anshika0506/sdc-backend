@@ -38,16 +38,16 @@ public class TestimonialsController {
                 .orElseGet(() -> ResponseEntity.ok(new ApiResponse(false, "Testimonial not found", null)));
     }
 
-    // ✅ Get all testimonials with base64 images
-    @GetMapping("/getAll")
-    public ResponseEntity<ApiResponse> getAllTestimonials() {
-        List<Testimonials> list = testimonialsService.getAllTestimonials();
-        List<Map<String, Object>> response = list.stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new ApiResponse(true, "Testimonials fetched successfully", response));
-    }
+//    // ✅ Get all testimonials with base64 images
+//    @GetMapping("/getAll")
+//    public ResponseEntity<ApiResponse> getAllTestimonials() {
+//        List<Testimonials> list = testimonialsService.getAllTestimonials();
+//        List<Map<String, Object>> response = list.stream()
+//                .map(this::convertToResponse)
+//                .collect(Collectors.toList());
+//
+//        return ResponseEntity.ok(new ApiResponse(true, "Testimonials fetched successfully", response));
+//    }
 
     // ❌ Delete testimonial
     @DeleteMapping("/delete/{id}")
