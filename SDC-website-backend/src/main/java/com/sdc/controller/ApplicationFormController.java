@@ -21,8 +21,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/forms")
-@CrossOrigin("*")
+@RequestMapping("/public/form")
+
 public class ApplicationFormController {
 
     @Autowired
@@ -32,7 +32,7 @@ public class ApplicationFormController {
     private EmailService emailService;
 
     // ✅ Create + Resume Upload + Send Email
-    @PostMapping(value = "/createWithResume", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/application-form", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> createFormWithResume(
             @ModelAttribute ApplicationFormModel formModel,
             @RequestParam("file") MultipartFile file) throws MessagingException {
@@ -95,41 +95,43 @@ public class ApplicationFormController {
         }
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<ApiResponse> getAllForms() {
-        List<ApplicationForm> list = applicationFormService.getAllForms();
-        if (list.isEmpty()) {
-            return ResponseEntity.ok(new ApiResponse(false, "No applications found", list));
-        } else {
-            return ResponseEntity.ok(new ApiResponse(true, "Applications fetched successfully", list));
-        }
-    }
-
-    @GetMapping("/get/{id}")
-    public ResponseEntity<ApiResponse> getFormById(@PathVariable Long id) {
-        return applicationFormService.getFormById(id)
-                .map(form -> ResponseEntity.ok(new ApiResponse(true, "Form found", form)))
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse(false, "Application form not found", null)));
-    }
-
-    // ❌ Delete
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse> deleteForm(@PathVariable Long id) {
-        try {
-            Optional<ApplicationForm> optional = applicationFormService.getFormById(id);
-            if (optional.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse(false, "Application form not found", null));
-            }
-            applicationFormService.deleteForm(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Application form deleted successfully", null));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(false, "Something went wrong while deleting", null));
-        }
-    }
+//    @GetMapping("/getAll")
+//    public ResponseEntity<ApiResponse> getAllForms() {
+//        List<ApplicationForm> list = applicationFormService.getAllForms();
+//        if (list.isEmpty()) {
+//            return ResponseEntity.ok(new ApiResponse(false, "No applications found", list));
+//        } else {
+//            return ResponseEntity.ok(new ApiResponse(true, "Applications fetched successfully", list));
+//        }
+//    }
+//
+//    @GetMapping("/get/{id}")
+//    public ResponseEntity<ApiResponse> getFormById(@PathVariable Long id) {
+//        return applicationFormService.getFormById(id)
+//                .map(form -> ResponseEntity.ok(new ApiResponse(true, "Form found", form)))
+//                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body(new ApiResponse(false, "Application form not found", null)));
+//    }
+//
+//    // ❌ Delete
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseEntity<ApiResponse> deleteForm(@PathVariable Long id) {
+//        try {
+//            Optional<ApplicationForm> optional = applicationFormService.getFormById(id);
+//            if (optional.isEmpty()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body(new ApiResponse(false, "Application form not found", null));
+//            }
+//            applicationFormService.deleteForm(id);
+//            return ResponseEntity.ok(new ApiResponse(true, "Application form deleted successfully", null));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(new ApiResponse(false, "Something went wrong while deleting", null));
+//        }
+//    }
+//    
+    
 	/*
 	 * @PutMapping(value = "/update/{id}", consumes =
 	 * MediaType.MULTIPART_FORM_DATA_VALUE) public ResponseEntity<ApiResponse>
