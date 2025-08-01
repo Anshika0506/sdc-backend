@@ -90,7 +90,7 @@ public class AuthController {
 	            .secure(false) // make sure you use HTTPS in production
 	            .path("/")
 	            .maxAge(3600) // 1 hour
-	            .sameSite("Strict") // Or "Lax" for dev with cross-origin
+	            .sameSite("Lax") // Or "Lax" for dev with cross-origin
 	            .build();
 
 	        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -130,6 +130,25 @@ public class AuthController {
 
 	        return ResponseEntity.ok(new ApiResponse(true, "Token is valid", data));
 	    }
+
+	    
+	    
+//	    
+//	    @PostMapping("/logout")
+//	    public ResponseEntity<ApiResponse> logout(HttpServletResponse response) {
+//	        // 🔒 Invalidate the JWT cookie by setting maxAge=0
+//	        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+//	            .httpOnly(true)
+//	            .secure(false) // change to true in production with HTTPS
+//	            .path("/")
+//	            .maxAge(0) // expires immediately
+//	            .sameSite("Strict")
+//	            .build();
+//
+//	        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+//
+//	        return ResponseEntity.ok(new ApiResponse(true, "Logged out successfully", null));
+//	    }
 
 	  
 	}
