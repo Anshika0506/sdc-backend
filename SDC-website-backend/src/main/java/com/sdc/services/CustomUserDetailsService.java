@@ -15,17 +15,22 @@ public class CustomUserDetailsService implements UserDetailsService {
     private AdminRepository adminRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
 
         System.out.println("Searching Email = [" + email + "]");
+
+        System.out.println("All admins in DB:");
+
+        adminRepository.findAll().forEach(admin ->
+                System.out.println(admin.getEmail())
+        );
 
         Admin admin = adminRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     System.out.println("ADMIN NOT FOUND");
                     return new UsernameNotFoundException("Admin not found");
                 });
-
-        System.out.println("ADMIN FOUND = " + admin.getEmail());
 
         return new AdminUserDetails(admin);
     }
