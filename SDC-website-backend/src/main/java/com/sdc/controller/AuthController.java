@@ -10,23 +10,15 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sdc.config.JwtService;
 import com.sdc.entity.Admin;
-import com.sdc.models.AdminModel;
 import com.sdc.models.LoginModel;
-import com.sdc.services.AdminService;
 import com.sdc.services.CustomUserDetailsService;
 import com.sdc.utils.AdminUserDetails;
 import com.sdc.utils.ApiResponse;
@@ -35,123 +27,100 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")
-//@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
-	
-	   @Autowired
-	    private AuthenticationManager authenticationManager;
 
-	    @Autowired
-	    private JwtService jwtService;
-	    
-	    @Autowired
-	    private AdminService adminService;
-	    
-	    @Autowired
-	    private PasswordEncoder passwordEncoder;
-	    
-	    @Autowired
-	    private CustomUserDetailsService customUserDetailsService;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-	
-	    @PostMapping("/login")
-	    public ResponseEntity<ApiResponse> login(@RequestBody LoginModel request, HttpServletResponse response) {
-	        UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getEmail());
+	@Autowired
+	private JwtService jwtService;
 
-	        String rawPassword = request.getPass();
-	        String storedPassword = userDetails.getPassword();
+	@Autowired
+	private CustomUserDetailsService customUserDetailsService;
 
-	        boolean passwordMatches;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-	        if (storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$")) {
-	            passwordMatches = passwordEncoder.matches(rawPassword, storedPassword);
-	        } else {
-	            passwordMatches = rawPassword.equals(storedPassword);
-	        }
+	// 🔥 LOGIN (CLEAN VERSION)
+	@PostMapping("/login")
+	public ResponseEntity<ApiResponse> login(@RequestBody LoginModel request,
+											 HttpServletResponse response) {
 
-	        if (!passwordMatches) {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                .body(new ApiResponse(false, "Invalid credentials", null));
-	        }
+		try {
+			System.out.println("===== LOGIN HIT =====");
+			System.out.println("Email: " + request.getEmail());
 
-	        UsernamePasswordAuthenticationToken authToken =
-	            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-	        SecurityContextHolder.getContext().setAuthentication(authToken);
+			// ✅ Spring Security authentication (BEST WAY)
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(
+							request.getEmail(),
+							request.getPassword()
+					)
+			);
 
-	        System.err.println("came  in controller");
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-	        // ✅ Generate token
-	        String token = jwtService.generateToken(userDetails);
-	        System.out.println("Generated token: " + token);
+			// ✅ Generate JWT
+			String token = jwtService.generateToken(userDetails);
+			System.out.println("Generated token: " + token);
 
-	        // ✅ Set token in HttpOnly cookie
-	        ResponseCookie cookie = ResponseCookie.from("jwt", token)
-	            .httpOnly(true)
-	            .secure(false) // make sure you use HTTPS in production
-	            .path("/")
-	            .maxAge(3600) // 1 hour
-	            .sameSite("Lax") // Or "Lax" for dev with cross-origin
-	            .build();
+			// ✅ Set HttpOnly Cookie
+			ResponseCookie cookie = ResponseCookie.from("jwt", token)
+					.httpOnly(true)
+					.secure(false) // true in production (HTTPS)
+					.path("/")
+					.maxAge(3600)
+					.sameSite("Lax")
+					.build();
 
-	        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+			response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-	        // ✅ Optionally return only admin details, no token
-	        Map<String, Object> responseData = new HashMap<>();
-	        if (userDetails instanceof AdminUserDetails adminUserDetails) {
-	            Admin admin = adminUserDetails.getAdmin();
-	            responseData.put("adminId", admin.getAdminId());
-	            responseData.put("name", admin.getName());
-	            responseData.put("email", admin.getEmail());
-	        }
+			// ✅ Response data
+			Map<String, Object> responseData = new HashMap<>();
 
-	        return ResponseEntity.ok(new ApiResponse(true, "Login successfull", responseData));
-	    }
+			if (userDetails instanceof AdminUserDetails adminUserDetails) {
+				Admin admin = adminUserDetails.getAdmin();
+				responseData.put("adminId", admin.getAdminId());
+				responseData.put("name", admin.getName());
+				responseData.put("email", admin.getEmail());
+			}
 
-	    
-	    @GetMapping("/verify-token")
-	    public ResponseEntity<ApiResponse> verifyToken(@CookieValue(name = "jwt", required = false) String token) {
-	        if (token == null || token.isEmpty()) {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                    .body(new ApiResponse(false, "Token is missing", null));
-	        }
+			return ResponseEntity.ok(
+					new ApiResponse(true, "Login successful", responseData)
+			);
 
-	        String username = jwtService.extractUsername(token);
-	        UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(username);
-
-	        if (!jwtService.isTokenValid(token, userDetails)) {
-	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-	                                 .body(new ApiResponse(false,"Invalid Token",null));
-	        }
-
-
-	        // (Optional) check user's roles if needed
-	        Map<String, Object> data = new HashMap<>();
-	        data.put("email", userDetails.getUsername());
-
-	        return ResponseEntity.ok(new ApiResponse(true, "Token is valid", data));
-	    }
-
-	    
-	    
-//	    
-//	    @PostMapping("/logout")
-//	    public ResponseEntity<ApiResponse> logout(HttpServletResponse response) {
-//	        // 🔒 Invalidate the JWT cookie by setting maxAge=0
-//	        ResponseCookie cookie = ResponseCookie.from("jwt", "")
-//	            .httpOnly(true)
-//	            .secure(false) // change to true in production with HTTPS
-//	            .path("/")
-//	            .maxAge(0) // expires immediately
-//	            .sameSite("Strict")
-//	            .build();
-//
-//	        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-//
-//	        return ResponseEntity.ok(new ApiResponse(true, "Logged out successfully", null));
-//	    }
-
-	  
+		} catch (AuthenticationException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(new ApiResponse(false, "Invalid credentials", null));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ApiResponse(false, "Login failed", null));
+		}
 	}
 
+	// 🔐 VERIFY TOKEN
+	@GetMapping("/verify-token")
+	public ResponseEntity<ApiResponse> verifyToken(
+			@CookieValue(name = "jwt", required = false) String token) {
 
+		if (token == null || token.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(new ApiResponse(false, "Token missing", null));
+		}
 
+		String username = jwtService.extractUsername(token);
+		UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+
+		if (!jwtService.isTokenValid(token, userDetails)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+					.body(new ApiResponse(false, "Invalid token", null));
+		}
+
+		Map<String, Object> data = new HashMap<>();
+		data.put("email", userDetails.getUsername());
+
+		return ResponseEntity.ok(
+				new ApiResponse(true, "Token valid", data)
+		);
+	}
+}
