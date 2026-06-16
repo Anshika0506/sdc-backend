@@ -5,11 +5,8 @@ import com.sdc.repo.AdminRepository;
 import com.sdc.utils.AdminUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -19,9 +16,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        System.out.println("Searching Email = [" + email + "]");
+
         Admin admin = adminRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
-        return new AdminUserDetails(admin); // Use custom wrapper
+                .orElseThrow(() -> {
+                    System.out.println("ADMIN NOT FOUND");
+                    return new UsernameNotFoundException("Admin not found");
+                });
+
+        System.out.println("ADMIN FOUND = " + admin.getEmail());
+
+        return new AdminUserDetails(admin);
     }
 }
-

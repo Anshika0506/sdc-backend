@@ -56,6 +56,11 @@ public class AuthController {
 			System.out.println("Email: " + request.getEmail());
 			System.out.println("Password Received: " + request.getPassword());
 
+			System.out.println("Admin Count = " + adminRepository.count());
+
+			adminRepository.findAll().forEach(a ->
+					System.out.println("DB EMAIL => [" + a.getEmail() + "]"));
+
 			// STEP 1 - DB CHECK
 			Admin admin = adminRepository.findByEmail(request.getEmail()).orElse(null);
 
