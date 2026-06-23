@@ -40,9 +40,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/", "/error").permitAll()
+                        .requestMatchers("/admin/saveAdmin").permitAll()
+                        .requestMatchers("/admin/login").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
